@@ -49,8 +49,8 @@ diskdef em68k
 end
 ```
 
-## Setup initial RAM disk
-The following cpmtools commands can be used to setup a typical default RAM disk:
+## Minimal initial RAM disk
+The following cpmtools commands can be used to create a minimal default RAM disk:
 ```
 mkfs.cpm -f em68k ramdisk.bin
 cpmcp -f em68k ramdisk.bin read.68k 0:READ.68K
@@ -58,11 +58,12 @@ cpmcp -f em68k ramdisk.bin write.68k 0:WRITE.68K
 cpmcp -f em68k ramdisk.bin quit.68k 0:QUIT.68K
 ```
 
-## Assembling the BIOS
-CP/M and the BIOS is already included in the "emubios.srec" file, but here is how to assemble it again from source. The Digital Research CP/M-68K disk set and toolchain is needed. Look for "68kv1_3.zip" at [cpm.z80.de](http://www.cpm.z80.de/binary.html)
+## C compiler and assembler toolchain
+The Digital Research CP/M-68K disk set and toolchain is quite useful since it provides a C compiler and assembler. Look for "68kv1_3.zip" at [cpm.z80.de](http://www.cpm.z80.de/binary.html)
 
-Prepare the RAM disk with the toolchain:
+Prepare a RAM disk by just copying all the files from all the disks:
 ```
+cd /tmp/cpm68k13
 unzip 68kv1_3.zip
 mkfs.cpm -f em68k /tmp/cpm68k13.ramdisk.bin
 for FILE in DISK*/*; do
@@ -70,7 +71,63 @@ for FILE in DISK*/*; do
 done
 ```
 
-Transfer the BIOS source file to the RAM disk and start the emulator:
+It can be useful to "relocate" some of the .REL programs into .68K programs. The .68K files are tied to the TPA of the running system, but it is then no longer necessary to specify the file extension to call them.
+
+Start the emulator:
+```
+./cpm68emu /tmp/cpm68k13.ramdisk.bin
+```
+And use the following commands:
+```
+RELOC.REL ED.REL ED.68K
+RELOC.REL PIP.REL PIP.68K
+RELOC.REL AS68.REL AS68.68K
+RELOC.REL CP68.REL CP68.68K
+RELOC.REL C068.REL C068.68K
+RELOC.REL C168.REL C168.68K
+RELOC.REL AR68.REL AR68.68K
+RELOC.REL LO68.REL LO68.68K
+RELOC.REL LINK68.REL LINK68.68K
+```
+The assembler needs to be initialized before it can be used, this is done by calling it once with the following arguments:
+```
+AS68 -I AS68INIT
+```
+Remember to enter the debugger (Ctrl+C) and save the contents of the RAM disk with the 'f' command afterwards.
+
+## Fortran 77 compiler
+There is a Fortran 77 compiler by Silicon Valley Software for CP/M-68K at [cpm.z80.de](http://www.cpm.z80.de/binary.html).
+
+Extract all the files from the zip file to a RAM disk:
+```
+cd /tmp/fortran77
+unzip SVS-FORTRAN-77-PATCHED-TO-WORK.zip
+mkfs.cpm -f em68k /tmp/fortran77.ramdisk.bin
+for FILE in /tmp/fortran77/*; do
+  cpmcp -f em68k /tmp/fortran77.ramdisk.bin $FILE 0:`basename $FILE`
+done
+```
+
+Start the emulator with the toolchain as the D: disk:
+```
+./cpm68emu /tmp/fortran77.ramdisk.bin -D /tmp/cpm68k13.ramdisk.bin
+```
+Use the following commands to set it up:
+```
+D:PIP.REL A: = D:LO68.68K
+D:PIP.REL A: = D:CLIB
+D:PIP.REL A: = D:S.O
+D:RELOC.REL FORTRAN.REL FORTRAN.68K
+D:RELOC.REL CODE.REL CODE.68K
+D:RELOC.REL ULINKER.REL ULINKER.68K
+```
+Enter the debugger (Ctrl+C) and save the RAM disk with the 'f' command. Fortran files can then be compiled with the 'F' script, but it really likes to reside as the B: disk:
+```
+./cpm68emu -B /tmp/fortran77.ramdisk.bin
+```
+
+## Assembling the BIOS
+CP/M and the BIOS is already included in the "emubios.srec" file, but here is how to assemble it again from source. Assuming the toolchain has already been setup on a RAM disk image, transfer the BIOS source file to the RAM disk and start the emulator:
 ```
 cpmcp -f em68k /tmp/cpm68k13.ramdisk.bin emubios.s 0:EMUBIOS.S
 ./cpm68emu /tmp/cpm68k13.ramdisk.bin
@@ -115,4 +172,11 @@ cpmcp -f em68k /tmp/cpm68k13.ramdisk.bin 0:READ.68K read.68k
 cpmcp -f em68k /tmp/cpm68k13.ramdisk.bin 0:WRITE.68K write.68k
 cpmcp -f em68k /tmp/cpm68k13.ramdisk.bin 0:QUIT.68K quit.68k
 ```
+
+## Further information
+Information on my blog:
+* [CP/M-68K and Motorola 68000 Emulator](https://kobolt.github.io/article-264.html)
+
+YouTube video:
+* [CP/M-68K Emulator](https://www.youtube.com/watch?v=OsRkhFyflAo)
 
