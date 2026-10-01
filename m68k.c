@@ -9,6 +9,11 @@
 #include "mem.h"
 #include "panic.h"
 
+#ifdef CPU_TIMER
+#include <unistd.h>
+#define CPU_TIMER_LIMIT 100000
+#endif /* CPU_TIMER */
+
 
 
 #ifndef CPU_TRACE
@@ -4782,8 +4787,12 @@ static void m68k_stop(m68k_t *cpu, mem_t *mem)
 {
   m68k_trace_op_mnemonic("STOP");
   if (cpu->status.s) {
+#ifdef CPU_TIMER
+    /* Relax host CPU and then trigger timer immediately. */ 
+    usleep(10000);
+    cpu->timer = CPU_TIMER_LIMIT;
+#endif /* CPU_TIMER */
     cpu->sr = m68k_sr_filter_bits(m68k_fetch(cpu, mem));
-    cpu->pc -= 4;
   } else {
     m68k_exception(cpu, mem, M68K_VECTOR_PRIVILEGE_VIOLATION);
   }
@@ -5206,6 +5215,19 @@ void m68k_execute(m68k_t *cpu, mem_t *mem)
 {
   uint16_t opcode;
 
+#ifdef CPU_TIMER
+  if (cpu->timer_enabled) {
+    cpu->timer++;
+    if (cpu->timer >= CPU_TIMER_LIMIT) {
+      cpu->timer = 0;
+      m68k_trace_start(cpu); /* Remove spurious trace. */
+      cpu->old_pc = cpu->pc; /* Make sure correct PC is placed on stack. */
+      m68k_exception(cpu, mem, 65 * 4); /* Call vector #65 */
+      return;
+    }
+  }
+#endif /* CPU_TIMER */
+
   if (setjmp(m68k_exception_jmp) > 0) {
     m68k_trace_end();
     return;
@@ -5491,7 +5513,6 @@ void m68k_execute(m68k_t *cpu, mem_t *mem)
           break;
 
         default:
-          panic("oneofthos");
           m68k_exception(cpu, mem, M68K_VECTOR_ILLEGAL_INSTRUCTION);
           break;
         }

@@ -1,5 +1,5 @@
 OBJECTS=main.o m68k.o m68k_trace.o mem.o debugger.o console.o ramdisk.o
-CFLAGS=-Wall -Wextra -DCPU_BREAKPOINT -DCPU_TRACE
+CFLAGS=-Wall -Wextra -DCPU_BREAKPOINT -DCPU_TRACE -DCPU_TIMER
 
 all: cpm68emu
 

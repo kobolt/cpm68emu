@@ -185,6 +185,12 @@ static void trap_hook(uint32_t d[8])
     exit(EXIT_SUCCESS);
     break;
 
+#ifdef CPU_TIMER
+  case 15: /* Timer Enable */
+    cpu.timer_enabled = true;
+    break;
+#endif /* CPU_TIMER */
+
   default:
     break;
   }

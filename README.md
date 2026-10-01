@@ -180,3 +180,7 @@ Information on my blog:
 YouTube video:
 * [CP/M-68K Emulator](https://www.youtube.com/watch?v=OsRkhFyflAo)
 
+## Version history:
+* 0.1 - Initial version.
+* 0.2 - Timer support for multitasking operating systems.
+

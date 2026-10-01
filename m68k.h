@@ -55,6 +55,11 @@ typedef struct m68k_s {
   m68k_ea_t dst;   /* Current Destination */
 
   m68k_trap_hook_t trap_15_hook;
+
+#ifdef CPU_TIMER
+  bool timer_enabled;
+  uint32_t timer;
+#endif /* CPU_TIMER */
 } m68k_t;
 
 #define M68K_SP 7 /* User Stack Pointer = A7 */
