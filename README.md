@@ -176,9 +176,11 @@ cpmcp -f em68k /tmp/cpm68k13.ramdisk.bin 0:QUIT.68K quit.68k
 ## Further information
 Information on my blog:
 * [CP/M-68K and Motorola 68000 Emulator](https://kobolt.github.io/article-264.html)
+* [Booting Linux from CP/M-68K](https://kobolt.github.io/article-287.html)
 
 YouTube video:
 * [CP/M-68K Emulator](https://www.youtube.com/watch?v=OsRkhFyflAo)
+* [Booting Linux from CP/M-68K](https://www.youtube.com/watch?v=7fprz9bCxRo)
 
 ## Version history:
 * 0.1 - Initial version.
