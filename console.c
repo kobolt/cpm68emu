@@ -187,6 +187,9 @@ void console_init(void)
 
   /* Make stdout unbuffered. */
   setvbuf(stdout, NULL, _IONBF, 0);
+
+  /* Make stdin unbuffered, to prevent mismatch between fgetc() and poll(). */
+  setvbuf(stdin, NULL, _IONBF, 0);
 }
 
 

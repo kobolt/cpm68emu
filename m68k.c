@@ -1219,8 +1219,8 @@ static void m68k_src_set(m68k_t *cpu, mem_t *mem,
     break;
 
   case EA_MODE_AR_DISP_16: /* (d16,An) */
-    m68k_trace_op_src("(d16, A%d)", reg);
     ext_word = m68k_fetch(cpu, mem);
+    m68k_trace_op_src("(%hd,A%d)", (int16_t)(ext_word & 0xFFFF), reg);
     address = m68k_address_reg_value(cpu, reg);
     address += (int16_t)(ext_word & 0xFFFF);
     cpu->src.l = M68K_LOCATION_MEM;
@@ -1228,8 +1228,8 @@ static void m68k_src_set(m68k_t *cpu, mem_t *mem,
     break;
 
   case EA_MODE_AR_DISP_8: /* (d8,An,Xn) */
-    m68k_trace_op_src("(d8, A%d, Xn)", reg);
     ext_word = m68k_fetch(cpu, mem);
+    m68k_trace_op_src("(%hhd,A%d,Xn)", (int8_t)(ext_word & 0xFF), reg);
     address = m68k_address_reg_value(cpu, reg);
     address += (int8_t)(ext_word & 0xFF);
     address += m68k_ext_word_reg_value(cpu, ext_word);
@@ -1255,8 +1255,8 @@ static void m68k_src_set(m68k_t *cpu, mem_t *mem,
       break;
 
     case EA_MODE_EXT_PC_DISP_16: /* (d16,PC) */
-      m68k_trace_op_src("(d16, PC)");
       ext_word = m68k_fetch(cpu, mem);
+      m68k_trace_op_src("(%hd,PC)", (int16_t)(ext_word & 0xFFFF));
       address = cpu->pc - 2;
       address += (int16_t)(ext_word & 0xFFFF);
       cpu->src.l = M68K_LOCATION_MEM;
@@ -1265,8 +1265,8 @@ static void m68k_src_set(m68k_t *cpu, mem_t *mem,
       break;
 
     case EA_MODE_EXT_PC_DISP_8: /* (d8,PC,Xn) */
-      m68k_trace_op_src("(d8, PC, Xn)");
       ext_word = m68k_fetch(cpu, mem);
+      m68k_trace_op_src("(%hhd,PC,Xn)", (int8_t)(ext_word & 0xFF));
       address = cpu->pc - 2;
       address += (int8_t)(ext_word & 0xFF);
       address += m68k_ext_word_reg_value(cpu, ext_word);
@@ -1450,8 +1450,8 @@ static void m68k_dst_set(m68k_t *cpu, mem_t *mem,
     break;
 
   case EA_MODE_AR_DISP_16: /* (d16,An) */
-    m68k_trace_op_dst("(d16, A%d)", reg);
     ext_word = m68k_fetch(cpu, mem);
+    m68k_trace_op_dst("(%hd,A%d)", (int16_t)(ext_word & 0xFFFF), reg);
     address = m68k_address_reg_value(cpu, reg);
     address += (int16_t)(ext_word & 0xFFFF);
     cpu->dst.l = M68K_LOCATION_MEM;
@@ -1459,8 +1459,8 @@ static void m68k_dst_set(m68k_t *cpu, mem_t *mem,
     break;
 
   case EA_MODE_AR_DISP_8: /* (d8,An,Xn) */
-    m68k_trace_op_dst("(d8, A%d, Xn)", reg);
     ext_word = m68k_fetch(cpu, mem);
+    m68k_trace_op_dst("(%hhd,A%d,Xn)", (int8_t)(ext_word & 0xFF), reg);
     address = m68k_address_reg_value(cpu, reg);
     address += (int8_t)(ext_word & 0xFF);
     address += m68k_ext_word_reg_value(cpu, ext_word);
@@ -1486,8 +1486,8 @@ static void m68k_dst_set(m68k_t *cpu, mem_t *mem,
       break;
 
     case EA_MODE_EXT_PC_DISP_16: /* (d16,PC) */
-      m68k_trace_op_dst("(d16, PC)");
       ext_word = m68k_fetch(cpu, mem);
+      m68k_trace_op_dst("(%hd,PC)", (int16_t)(ext_word & 0xFFFF));
       address = cpu->pc - 2;
       address += (int16_t)(ext_word & 0xFFFF);
       cpu->dst.l = M68K_LOCATION_MEM;
@@ -1496,8 +1496,8 @@ static void m68k_dst_set(m68k_t *cpu, mem_t *mem,
       break;
 
     case EA_MODE_EXT_PC_DISP_8: /* (d8,PC,Xn) */
-      m68k_trace_op_dst("(d8, PC, Xn)");
       ext_word = m68k_fetch(cpu, mem);
+      m68k_trace_op_dst("(%hhd,PC,Xn)", (int8_t)(ext_word & 0xFF));
       address = cpu->pc - 2;
       address += (int8_t)(ext_word & 0xFF);
       address += m68k_ext_word_reg_value(cpu, ext_word);

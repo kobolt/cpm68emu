@@ -185,4 +185,5 @@ YouTube video:
 ## Version history:
 * 0.1 - Initial version.
 * 0.2 - Timer support for multitasking operating systems.
+* 0.3 - Force unbuffered stdin.
 
